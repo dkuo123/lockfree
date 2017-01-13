@@ -1,0 +1,31 @@
+#include <iostream>
+
+
+template<class T>
+void case1(T ) { std::cout << "Case1 most generic\n"; }
+
+template<class T>
+void case1(T* ) { std::cout << "Case1 pointer generic\n"; }
+
+template<>
+void case1<>(int* ) { std::cout << "Case1 int pointer\n"; }
+
+
+template<class T>
+void case2(T ) { std::cout << "Case2 most generic\n"; }
+
+template<>
+void case2<>(int* ) { std::cout << "Case2 int pointer\n"; }
+
+template<class T>
+void case2(T* ) { std::cout << "Case2 pointer generic\n"; }
+
+
+int main() {
+    int* x = 0;
+
+    case1(x);
+    case2(x);
+
+}
+

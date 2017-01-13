@@ -1,0 +1,14 @@
+#include <iostream>
+using namespace std;
+
+int output() {
+ 
+  unsigned int foo = 0;
+  unsigned short *foo_s = reinterpret_cast<unsigned short *>(&foo);
+ *foo_s = 3;
+ return foo; // optimizer may assume foo is not changed
+}
+
+main() {
+  cout << output() << endl;
+}

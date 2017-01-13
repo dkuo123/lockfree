@@ -1,0 +1,106 @@
+#include <iostream>
+//Curiously recurring template pattern, https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
+// Some use cases for this pattern are static polymorphism
+// This technique achieves a similar effect to the use of virtual functions, without the costs (and some flexibility) of dynamic polymorphism
+template <typename Derived, typename T>
+class Base {
+    Derived &GetDerived() {
+        return static_cast<Derived &>(*this);
+    } // NOTE, can't return an object of Derived, will cause recursive
+
+public:
+    T parentVal;
+
+    void printAllData() {
+        GetDerived().print();
+    }
+};
+
+template <typename T>
+class Derived : public Base<Derived<T>, T> {
+public:
+    T childVal;
+
+    void print() {
+        //std::cout << "Parent val: " << parentVal << std::endl;   //Doesn't work
+        std::cout << "Parent val: " << Base<Derived<T>, T>::parentVal << std::endl;
+        std::cout << "Child val: " << childVal << std::endl;
+    }
+};
+
+
+template <typename T>
+struct counter
+{
+    static int objects_created;
+    static int objects_alive;
+
+    counter()
+    {
+        ++objects_created;
+        ++objects_alive;
+    }
+    
+    counter(const counter&)
+    {
+        ++objects_created;
+        ++objects_alive;
+    }
+protected:
+    ~counter() // objects should never be removed through pointers of this type
+    {
+        --objects_alive;
+    }
+};
+template <typename T> int counter<T>::objects_created( 0 );
+template <typename T> int counter<T>::objects_alive( 0 );
+
+class X : public counter<X>
+{
+    // ...
+};
+
+class Y : counter<Y>
+{
+    // ...
+};
+
+// Polymorphic copy construction
+// Base class has a pure virtual function for cloning
+class Shape {
+public:
+    virtual ~Shape() {};
+    virtual Shape *clone() const = 0;
+};
+// This CRTP class implements clone() for Derived
+template <typename Derived>
+class Shape_CRTP : public Shape {
+public:
+    virtual Shape *clone() const {
+        return new Derived(static_cast<Derived const&>(*this));
+    }
+};
+
+// Nice macro which ensures correct CRTP usage
+#define Derive_Shape_CRTP(Type) class Type: public Shape_CRTP<Type>
+
+// Every derived class inherits from Shape_CRTP instead of Shape
+Derive_Shape_CRTP(Square) {};
+Derive_Shape_CRTP(Circle) {};
+
+#include <typeinfo>
+
+int main() {
+    Derived<int> var;
+    var.childVal = 5;
+    var.parentVal = 10;
+    var.printAllData();
+    X x;
+    {
+      X x2(x);
+    }
+    std::cout << "X created = " << X::objects_created << ", alive = " << x.objects_alive << std::endl;
+    Shape *p = new Circle();
+    std::cout << typeid(p->clone()).name() << std::endl;
+    return 0;
+}

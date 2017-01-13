@@ -1,0 +1,12 @@
+template <class T>
+struct check
+{
+template <class U =T,class = typename std::enable_if<std::is_same<U,int>::value>::type >
+inline static U readVal();
+}
+template <class U =T,class = typename std::enable_if<std::is_same<U,double>::value>::type >
+inline static U readVal();
+
+main() {
+}
+

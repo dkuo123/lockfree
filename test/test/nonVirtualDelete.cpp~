@@ -1,0 +1,30 @@
+#include <cstdio>
+
+class Animal {
+public:
+  virtual void say() = 0;
+  virtual ~Animal() {}
+};
+
+class Sheep : public Animal {
+public:
+  virtual void say() {
+    printf("Sheep says baaaaa\n");
+  }
+
+  virtual ~Sheep() {
+    printf("Sheep is dead\n");
+  }
+
+  void operator delete(void* p) {
+    printf("Reclaiming Sheep storage from %p\n", p);
+    ::operator delete(p);
+  }
+};
+
+int main(int argc, char** argv) {
+  Animal* ap = new Sheep;
+  ap->say();
+  delete ap;
+  return 0;
+}
