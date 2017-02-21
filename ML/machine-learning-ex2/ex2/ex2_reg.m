@@ -54,13 +54,13 @@ hold off;
 % Add Polynomial Features
 
 % Note that mapFeature also adds a column of ones for us, so the intercept
-% term is handled
+% term is handled, i.e, 27 + first column =1
 X = mapFeature(X(:,1), X(:,2));
 
 % Initialize fitting parameters
 initial_theta = zeros(size(X, 2), 1);
 
-% Set regularization parameter lambda to 1
+% Set regularization parameter lambda to 1, good fitting
 lambda = 1;
 
 % Compute and display initial cost and gradient for regularized logistic
@@ -108,6 +108,9 @@ initial_theta = zeros(size(X, 2), 1);
 % Set regularization parameter lambda to 1 (you should vary this)
 lambda = 1;
 
+%lambda = 0; %overfitting
+
+%lambda = 100; % underfitting
 % Set Options
 options = optimset('GradObj', 'on', 'MaxIter', 400);
 
