@@ -21,7 +21,7 @@ p = zeros(size(X, 1), 1);
 %       can use max(A, [], 2) to obtain the max for each row.
 %
 
-% Add ones to the X data matrix, layer 1
+% Add ones to the X data matrix, layer 1, it's called bias unit
 X = [ones(m, 1) X];
 % Z1 = X*Theta1'; A1 = sigmoid(Z1)
 A1 = sigmoid(X*Theta1'); 
